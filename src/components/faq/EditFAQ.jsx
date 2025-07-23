@@ -1,28 +1,31 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { api } from '../../config/api.config';
+import useUserStore from '../../store/useUserStore';
 
 const EditFAQ = () => {
   const { id } = useParams();
   const nav = useNavigate();
 
+  const { userToken } = useUserStore(); 
   const [question, setQuestion] = useState('');
   const [answer, setAnswer] = useState('');
   const [category, setCategory] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api.get(`/admin/faqs/${id}`)
-      .then((res) => {
-        setQuestion(res.data.question);
-        setAnswer(res.data.answer);
-        setCategory(res.data.category);
-        setLoading(false);
-      })
-      .catch(() => {
-        alert('FAQ를 불러오지 못했습니다.');
-        nav('/admin/faqs');
-      });
+    if(userToken) {
+      api.get(`/admin/faqs/${id}`)
+        .then((res) => {
+          setQuestion(res.data.question);
+          setAnswer(res.data.answer);
+          setCategory(res.data.category);
+          setLoading(false);
+        })
+    } else {
+      alert('관리자 권한이 없습니다.');
+      nav('/');
+    }
   }, [id, nav]);
 
   const handleSubmit = async (e) => {

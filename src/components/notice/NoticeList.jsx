@@ -31,10 +31,12 @@ const Notice = () => {
   }, [page, limit]);
 
   const handleDelete = (id) => {
-    api.delete(`/admin/notices/${id}`)
-      .then(() => {
-        setNotices(notices.filter(notice => notice._id !== id));
-      });
+    if(window.confirm('정말로 삭제하시겠습니까?')) {
+      api.delete(`/admin/notices/${id}`)
+        .then(() => {
+          setNotices(notices.filter(notice => notice._id !== id));
+        });
+    }
   };
 
   const handlePageChange = (newPage) => {

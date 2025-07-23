@@ -1,23 +1,30 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { api } from '../../config/api.config';
+import useUserStore from '../../store/useUserStore';
 
 const FAQDetail = () => {
   const { id } = useParams();
   const [faq, setFaq] = useState(null);
   const [loading, setLoading] = useState(true);
   const nav = useNavigate();
+  const {userToken} = useUserStore();
 
   useEffect(() => {
-    api.get(`/admin/faqs/${id}`)
-      .then((res) => {
-        setFaq(res.data);
-        setLoading(false);
-      })
-      .catch(() => {
-        alert('FAQ를 불러오지 못했습니다.');
-        nav('/admin/faqs');
-      });
+    if(userToken) {
+      api.get(`/admin/faqs/${id}`)
+        .then((res) => {
+          setFaq(res.data);
+          setLoading(false);
+        })
+        .catch(() => {
+          alert('FAQ를 불러오지 못했습니다.');
+          nav('/admin/faqs');
+        });
+    } else {
+      alert('관리자 권한이 없습니다.');
+      nav('/');
+    }
   }, [id, nav]);
 
   if (loading) {

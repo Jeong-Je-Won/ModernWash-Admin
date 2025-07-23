@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { api } from '../../config/api.config';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import Pagination from '../common/Pagination';
+import useUserStore from '../../store/useUserStore';
 
 const FAQAdminList = () => {
   const [faqs, setFaqs] = useState([]);
@@ -11,16 +12,21 @@ const FAQAdminList = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const page = Number(searchParams.get('page')) || 1;
   const limit = Number(searchParams.get('limit')) || 10;
+  const { userToken } = useUserStore();
 
   useEffect(() => {
     setLoading(true);
-    api.get(`/admin/faqs?page=${page}&limit=${limit}`)
-      .then((res) => {
-        setFaqs(res.data.faqs);
-        setTotal(res.data.total || 0);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
+    if(userToken) {
+      api.get(`/admin/faqs?page=${page}&limit=${limit}`)
+        .then((res) => {
+          setFaqs(res.data.faqs);
+          setTotal(res.data.total || 0);
+          setLoading(false);
+        })
+    } else {
+      alert('관리자 권한이 없습니다.');
+      nav('/');
+    }
   }, [page, limit]);
 
   const handlePageChange = (newPage) => {

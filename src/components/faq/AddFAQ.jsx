@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../config/api.config';
 import useCategoryStore from '../../store/categoryStroe';
+import useUserStore from '../../store/useUserStore';
 
 const AddFAQ = () => {
   const categories = useCategoryStore(state => state.categories);
@@ -10,6 +11,14 @@ const AddFAQ = () => {
   const [answer, setAnswer] = useState('');
   const [category, setCategory] = useState('');
   const [loading, setLoading] = useState(false);
+  const { userToken } = useUserStore();
+
+  useEffect(() => {
+    if(!userToken) {
+      alert('관리자 권한이 없습니다.');
+      nav('/');
+    }
+  }, [userToken, nav]); 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
