@@ -63,12 +63,17 @@ const Notice = () => {
                     <tr>
                         <th style={{
                             borderBottom: '2px solid #1976d2',
-                            padding: '12px 4px', textAlign: 'left', fontWeight: 700, color: '#222', width: '70%'
+                            padding: '14px 8px', textAlign: 'left', fontWeight: 700, color: '#222', maxWidth: 250, width: '40%'
                         }}>
                             글제목</th>
                         <th style={{
                             borderBottom: '2px solid #1976d2',
-                            padding: '12px 4px', textAlign: 'center', fontWeight: 700, color: '#222', width: '30%'
+                            padding: '14px 8px', textAlign: 'center', fontWeight: 700, color: '#222', width: '20%'
+                        }}>
+                            생성날짜</th>
+                        <th style={{
+                            borderBottom: '2px solid #1976d2',
+                            padding: '14px 8px', textAlign: 'center', fontWeight: 700, color: '#222', width: '20%'
                         }}>
                             관리</th>
                     </tr>
@@ -78,11 +83,16 @@ const Notice = () => {
                         <tr key={index} style={{ borderBottom: '1px solid #eee' }}>
                             <td
                                 style={{
-                                    padding: '12px 8px',
-                                    fontSize: 16,
+                                    padding: '14px 10px',
+                                    fontSize: 17,
                                     color: '#222',
                                     cursor: 'pointer',
-                                    transition: 'font-weight 0.2s'
+                                    transition: 'font-weight 0.2s',
+                                    maxWidth: 250,
+                                    width: '40%',
+                                    whiteSpace: 'nowrap',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
                                 }}
                                 onClick={() => nav(`/admin/notices/${notice._id}`)}
                                 onMouseOver={e => {
@@ -94,16 +104,21 @@ const Notice = () => {
                             >
                                 {notice.title}
                             </td>
-                            <td style={{ padding: '12px 8px', textAlign: 'center' }}>
+                            <td style={{ padding: '14px 10px', fontSize: 16, color: '#444', textAlign: 'center', width: '20%' }}>
+                              {notice.createdAt ? notice.createdAt.slice(0, 10) : ''}
+                            </td>
+                            <td style={{ padding: '14px 10px', textAlign: 'center', width: '20%' }}>
+                              <div style={{ display: 'flex', justifyContent: 'center', gap: '8px' }}>
                                 <button
                                     style={{
-                                        marginRight: 8,
-                                        padding: '6px 12px',
+                                        marginRight: 0,
+                                        padding: '7px 16px',
                                         background: '#1976d2',
                                         color: '#fff',
                                         border: '1px solid #1976d2',
                                         borderRadius: 4,
                                         cursor: 'pointer',
+                                        fontSize: 15,
                                         transition: 'background 0.2s, color 0.2s',
                                     }}
                                     onMouseOver={e => {
@@ -120,12 +135,13 @@ const Notice = () => {
                                 >수정</button>
                                 <button
                                     style={{
-                                        padding: '6px 12px',
+                                        padding: '7px 16px',
                                         background: '#d32f2f',
                                         color: '#fff',
                                         border: '1px solid #d32f2f',
                                         borderRadius: 4,
                                         cursor: 'pointer',
+                                        fontSize: 15,
                                         transition: 'background 0.2s, color 0.2s',
                                     }}
                                     onMouseOver={e => {
@@ -140,6 +156,7 @@ const Notice = () => {
                                     }}
                                     onClick={() => handleDelete(notice._id)}
                                 >삭제</button>
+                              </div>
                             </td>
                         </tr>
                     ))}
