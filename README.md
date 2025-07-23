@@ -4,7 +4,7 @@
 npm run start
 ```
 
-- 사용 라이브러리 : react v18.3.1, react-router-dom v6.30.1, zustand v5.0.6
+- 사용 라이브러리 : react v18.3.1, react-router-dom v6.30.1, zustand v5.0.6, mui v7.2.0 
 
 1. 메인페이지
 * 비 로그인 시
