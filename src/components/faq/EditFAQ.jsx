@@ -2,8 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { api } from '../../config/api.config';
 import useUserStore from '../../store/useUserStore';
+import useCategoryStore from '../../store/categoryStroe';
 
 const EditFAQ = () => {
+  const categories = useCategoryStore(state => state.categories);
+
   const { id } = useParams();
   const nav = useNavigate();
 
@@ -14,19 +17,23 @@ const EditFAQ = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if(userToken) {
-      api.get(`/admin/faqs/${id}`)
-        .then((res) => {
-          setQuestion(res.data.question);
-          setAnswer(res.data.answer);
-          setCategory(res.data.category);
-          setLoading(false);
-        })
-    } else {
+    if (!userToken) {
       alert('관리자 권한이 없습니다.');
       nav('/');
+      return;
     }
-  }, [id, nav]);
+    api.get(`/admin/faqs/${id}`)
+      .then((res) => {
+        setQuestion(res.data.question);
+        setAnswer(res.data.answer);
+        setCategory(res.data.category);
+        setLoading(false);
+      })
+      .catch(() => {
+        alert('FAQ를 불러오지 못했습니다.');
+        nav('/admin/faqs');
+      });
+  }, [id, nav, userToken]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -89,8 +96,9 @@ const EditFAQ = () => {
             }}
           >
             <option value="">카테고리를 선택하세요</option>
-            <option value="회원/로그인">회원/로그인</option>
-            <option value="서비스 이용">서비스 이용</option>
+            {categories.map(category => (
+              <option key={category._id} value={category._id}>{category.name}</option>
+            ))}
           </select>
         </div>
         <div style={{ marginBottom: 20 }}>
