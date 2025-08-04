@@ -10,7 +10,7 @@ const Header = () => {
     const { userToken,setUserToken } = useUserStore();
 
     return (
-        <AppBar position="static" color="primary">
+        <AppBar position="fixed" color="primary" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
         <Toolbar>
             <Typography variant="h6" component="div" sx={{ flexGrow: 1, cursor: 'pointer' }} onClick={() => nav('/')}>
                 ModernWash

@@ -13,13 +13,17 @@ import AddFAQ from './components/faq/AddFAQ';
 import EditFAQ from './components/faq/EditFAQ';
 import FAQDetail from './components/faq/FAQDetail';
 import FAQUserList from './components/faq/FAQUserList';
+import MemberList from './components/members/MemberList';
+import BannerList from './components/banners/BannerList';
+import SubscriptionsList from './components/subscriptions/SubscriptionsList';
+import VehiclesList from './components/cards/VehiclesList';
 
 function App() {
 
   return (
     <div className="App" style={{ userSelect: 'none' }}>
       <Header />
-      <div style={{ display: 'flex' }}>
+      <div style={{ display: 'flex', marginTop: '64px' }}>
         <Sidebar />
         <div style={{ flexGrow: 1, padding: '20px' }}>
           <Routes>
@@ -34,6 +38,10 @@ function App() {
             <Route path="/admin/faqs/:id" element={<FAQDetail />} />
             <Route path="/admin/add-faq" element={<AddFAQ />} />
             <Route path="/admin/faqs/:id/edit" element={<EditFAQ />} />
+            <Route path="/admin/members" element={<MemberList />} />
+            <Route path="/admin/banners" element={<BannerList />} />
+            <Route path="/admin/subscriptions" element={<SubscriptionsList />} />
+            <Route path="/admin/cards" element={<VehiclesList />} />
           </Routes>
         </div>
       </div>

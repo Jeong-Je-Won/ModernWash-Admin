@@ -88,7 +88,9 @@ const EditNotice = () => {
               fontSize: 16,
               border: '1px solid #ccc',
               borderRadius: 4,
-              resize: 'vertical'
+              resize: 'vertical',
+              whiteSpace: 'pre-wrap',
+              lineHeight: '1.5'
             }}
             placeholder="공지사항 내용을 입력하세요"
           />
