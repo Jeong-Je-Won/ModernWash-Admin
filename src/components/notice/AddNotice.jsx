@@ -24,7 +24,9 @@ const AddNotice = () => {
     }
     setLoading(true);
     try {
-      await api.post('/admin/notices', { title, content });
+      // 개행을 br 태그로 변환
+      const contentWithBr = content.replace(/\n/g, '<br>');
+      await api.post('/admin/notices', { title, content: contentWithBr });
       alert('공지사항이 등록되었습니다.');
       nav('/admin/notices');
     } catch (err) {

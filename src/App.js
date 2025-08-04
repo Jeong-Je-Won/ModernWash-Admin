@@ -14,9 +14,9 @@ import EditFAQ from './components/faq/EditFAQ';
 import FAQDetail from './components/faq/FAQDetail';
 import FAQUserList from './components/faq/FAQUserList';
 import MemberList from './components/members/MemberList';
+import MemberVehicles from './components/members/MemberVehicles';
 import BannerList from './components/banners/BannerList';
 import SubscriptionsList from './components/subscriptions/SubscriptionsList';
-import VehiclesList from './components/cards/VehiclesList';
 
 function App() {
 
@@ -39,9 +39,9 @@ function App() {
             <Route path="/admin/add-faq" element={<AddFAQ />} />
             <Route path="/admin/faqs/:id/edit" element={<EditFAQ />} />
             <Route path="/admin/members" element={<MemberList />} />
+            <Route path="/admin/members/:memberId/vehicles" element={<MemberVehicles />} />
             <Route path="/admin/banners" element={<BannerList />} />
             <Route path="/admin/subscriptions" element={<SubscriptionsList />} />
-            <Route path="/admin/cards" element={<VehiclesList />} />
           </Routes>
         </div>
       </div>

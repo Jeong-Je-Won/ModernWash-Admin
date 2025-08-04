@@ -22,12 +22,16 @@ const BannerList = () => {
     }, []);
 
     const handleToggleActive = (fileName, currentStatus) => {
-        bannerApi.put(`/admin/banners/${fileName}/activate`)
+        const newStatus = !currentStatus;
+        
+        bannerApi.put(`/admin/banners/${fileName}/activate`, {
+            isActive: newStatus
+        })
             .then(() => {
-                // 활성화된 배너는 다른 배너들을 비활성화
+                // 해당 배너의 활성화 상태만 토글
                 setBanners(banners.map(banner => ({
                     ...banner,
-                    isActive: banner.fileName === fileName
+                    isActive: banner.fileName === fileName ? newStatus : banner.isActive
                 })));
             })
             .catch(err => {

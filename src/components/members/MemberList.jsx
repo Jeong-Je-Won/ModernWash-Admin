@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { memberApi } from '../../config/api.config';
 import Loading from '../common/Loading';
 import Pagination from '../common/Pagination';
+import LimitSelect from '../common/LimitSelect';
 import MemberModal from './MemberModal';
 import EditMemberModal from './EditMemberModal';
 
@@ -35,6 +36,10 @@ const MemberList = () => {
 
     const handlePageChange = (newPage) => {
         setSearchParams({ page: newPage, limit });
+    };
+
+    const handleLimitChange = (newLimit) => {
+        setSearchParams({ page: 1, limit: newLimit });
     };
 
     const handleDelete = (id) => {
@@ -79,6 +84,11 @@ const MemberList = () => {
             <h2 style={{ fontSize: 24, fontWeight: 700, borderBottom: '2px solid #1976d2', paddingBottom: 8, color: '#222', margin: 0 }}>
                 회원 전체 목록
             </h2>
+            
+            <div style={{ marginTop: '16px' }}>
+                <LimitSelect limit={limit} onLimitChange={handleLimitChange} />
+            </div>
+            
             <div style={{ minHeight: 220 }}>
                 {loading ? (
                     <div style={{ textAlign: 'center', padding: '40px 0' }}>로딩 중...</div>
@@ -113,6 +123,7 @@ const MemberList = () => {
                                                 onMouseOut={e => {
                                                     e.currentTarget.style.fontWeight = '500';
                                                 }}
+                                                onClick={() => nav(`/admin/members/${member._id}/vehicles`)}
                                             >
                                                 {member.memberNickname || '-'}
                                             </td>
@@ -140,6 +151,8 @@ const MemberList = () => {
                                                             cursor: 'pointer',
                                                             fontSize: 15,
                                                             transition: 'background 0.2s, color 0.2s',
+                                                            whiteSpace: 'nowrap',
+                                                            textAlign: 'center',
                                                         }}
                                                         onMouseOver={e => {
                                                             e.currentTarget.style.background = '#fff';
@@ -166,6 +179,8 @@ const MemberList = () => {
                                                             cursor: 'pointer',
                                                             fontSize: 15,
                                                             transition: 'background 0.2s, color 0.2s',
+                                                            whiteSpace: 'nowrap',
+                                                            textAlign: 'center',
                                                         }}
                                                         onMouseOver={e => {
                                                             e.currentTarget.style.background = '#fff';

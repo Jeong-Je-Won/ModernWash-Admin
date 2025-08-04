@@ -21,7 +21,9 @@ const EditNotice = () => {
     api.get(`/admin/notices/${id}`)
       .then((res) => {
         setTitle(res.data.title);
-        setContent(res.data.content);
+        // br 태그를 개행으로 변환
+        const contentWithNewlines = res.data.content.replace(/<br>/g, '\n');
+        setContent(contentWithNewlines);
         setLoading(false);
       })
       .catch(() => {
@@ -37,7 +39,9 @@ const EditNotice = () => {
       return;
     }
     try {
-      await api.put(`/admin/notices/${id}`, { title, content });
+      // 개행을 br 태그로 변환
+      const contentWithBr = content.replace(/\n/g, '<br>');
+      await api.put(`/admin/notices/${id}`, { title, content: contentWithBr });
       alert('공지사항이 수정되었습니다.');
       nav(`/admin/notices/${id}`);
     } catch (err) {

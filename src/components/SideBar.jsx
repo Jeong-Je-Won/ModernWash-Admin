@@ -13,10 +13,9 @@ const Sidebar = () => {
   const menuList = userToken ? [
     { label: '공지사항 관리', path: '/admin/notices?page=1&limit=10' },
     { label: 'FAQ 관리', path: '/admin/faqs?page=1&limit=10' },
-    { label: '사용자 관리', path: '/admin/members?page=1&limit=5' },
+    { label: '사용자 관리', path: '/admin/members?page=1&limit=10' },
     { label: '배너 관리', path: '/admin/banners' },
     { label: '구독 관리', path: '/admin/subscriptions' },
-    { label: '카드 관리', path: '/admin/cards' },
   ] : [
     { label: 'FAQ', path: '/faqs' },
   ];

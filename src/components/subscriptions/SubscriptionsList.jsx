@@ -155,6 +155,31 @@ const SubscriptionsList = () => {
                                                     <button
                                                         style={{
                                                             padding: '7px 16px',
+                                                            background: '#1976d2',
+                                                            color: '#fff',
+                                                            border: '1px solid #1976d2',
+                                                            borderRadius: 4,
+                                                            cursor: 'pointer',
+                                                            fontSize: 15,
+                                                            transition: 'background 0.2s, color 0.2s',
+                                                            whiteSpace: 'nowrap',
+                                                            textAlign: 'center',
+                                                        }}
+                                                        onMouseOver={e => {
+                                                            e.currentTarget.style.background = '#fff';
+                                                            e.currentTarget.style.color = '#1976d2';
+                                                            e.currentTarget.style.border = '1px solid #1976d2';
+                                                        }}
+                                                        onMouseOut={e => {
+                                                            e.currentTarget.style.background = '#1976d2';
+                                                            e.currentTarget.style.color = '#fff';
+                                                            e.currentTarget.style.border = '1px solid #1976d2';
+                                                        }}
+                                                        onClick={() => handleCancel(subscription)}
+                                                    >취소</button>
+                                                    <button
+                                                        style={{
+                                                            padding: '7px 16px',
                                                             background: '#d32f2f',
                                                             color: '#fff',
                                                             border: '1px solid #d32f2f',
@@ -162,6 +187,8 @@ const SubscriptionsList = () => {
                                                             cursor: 'pointer',
                                                             fontSize: 15,
                                                             transition: 'background 0.2s, color 0.2s',
+                                                            whiteSpace: 'nowrap',
+                                                            textAlign: 'center',
                                                         }}
                                                         onMouseOver={e => {
                                                             e.currentTarget.style.background = '#fff';
@@ -172,29 +199,6 @@ const SubscriptionsList = () => {
                                                             e.currentTarget.style.background = '#d32f2f';
                                                             e.currentTarget.style.color = '#fff';
                                                             e.currentTarget.style.border = '1px solid #d32f2f';
-                                                        }}
-                                                        onClick={() => handleCancel(subscription)}
-                                                    >취소</button>
-                                                    <button
-                                                        style={{
-                                                            padding: '7px 16px',
-                                                            background: '#ff9800',
-                                                            color: '#fff',
-                                                            border: '1px solid #ff9800',
-                                                            borderRadius: 4,
-                                                            cursor: 'pointer',
-                                                            fontSize: 15,
-                                                            transition: 'background 0.2s, color 0.2s',
-                                                        }}
-                                                        onMouseOver={e => {
-                                                            e.currentTarget.style.background = '#fff';
-                                                            e.currentTarget.style.color = '#ff9800';
-                                                            e.currentTarget.style.border = '1px solid #ff9800';
-                                                        }}
-                                                        onMouseOut={e => {
-                                                            e.currentTarget.style.background = '#ff9800';
-                                                            e.currentTarget.style.color = '#fff';
-                                                            e.currentTarget.style.border = '1px solid #ff9800';
                                                         }}
                                                         onClick={() => handleRefund(subscription)}
                                                     >환불</button>

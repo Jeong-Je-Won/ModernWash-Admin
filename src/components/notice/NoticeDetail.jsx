@@ -50,7 +50,7 @@ const NoticeDetail = () => {
           <div style={{ fontSize: 20, fontWeight: 600, color: '#1976d2', marginBottom: 8 }}>{notice.title}</div>
         </div>
         <div style={{ fontSize: 16, color: '#222', lineHeight: 1.7, whiteSpace: 'pre-line' }}>
-          {notice.content}
+          {notice.content.replace(/<br>/g, '\n')}
         </div>
       </div>
       <div style={{ marginTop: 24, textAlign: 'right' }}>
