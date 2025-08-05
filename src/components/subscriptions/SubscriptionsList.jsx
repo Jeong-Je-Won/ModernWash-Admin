@@ -1,23 +1,67 @@
 import React, { useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router-dom';
 import { subApi } from '../../config/api.config';
 import Loading from '../common/Loading';
+import Pagination from '../common/Pagination';
+import LimitSelect from '../common/LimitSelect';
 
 const SubscriptionsList = () => {
+    const [searchParams, setSearchParams] = useSearchParams();
     const [subscriptions, setSubscriptions] = useState([]);
+    const [allSubscriptions, setAllSubscriptions] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [total, setTotal] = useState(0);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [searchInput, setSearchInput] = useState('');
+
+    const page = Number(searchParams.get('page')) || 1;
+    const limit = Number(searchParams.get('limit')) || 10;
 
     useEffect(() => {
         setLoading(true);
-        subApi.get(`/admin/subscriptions/active`)
+        subApi.get('/admin/subscriptions/active')
             .then(res => {
                 console.log(res.data);
-                setSubscriptions(res.data || []);
+                let allSubscriptions = [];
+                
+                // API가 배열로 반환되는 경우
+                if (Array.isArray(res.data)) {
+                    allSubscriptions = res.data;
+                } else {
+                    // API가 객체로 반환되는 경우 (subscriptions, total 포함)
+                    allSubscriptions = res.data.subscriptions || res.data || [];
+                }
+                
+                setAllSubscriptions(allSubscriptions);
                 setLoading(false);
             }).catch(err => {
                 console.log(err);
                 setLoading(false);
             })
     }, []);
+
+    // 검색과 페이지네이션을 위한 별도 useEffect
+    useEffect(() => {
+        if (allSubscriptions.length > 0) {
+            // 검색 필터링
+            let filteredSubscriptions = allSubscriptions;
+            if (searchTerm) {
+                filteredSubscriptions = allSubscriptions.filter(subscription => 
+                    subscription.userId?.memberNickname?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    subscription.userId?.memberEmail?.toLowerCase().includes(searchTerm.toLowerCase())
+                );
+            }
+            
+            setTotal(filteredSubscriptions.length);
+            
+            // 클라이언트 사이드 페이지네이션
+            const startIndex = (page - 1) * limit;
+            const endIndex = startIndex + limit;
+            const paginatedSubscriptions = filteredSubscriptions.slice(startIndex, endIndex);
+            
+            setSubscriptions(paginatedSubscriptions);
+        }
+    }, [allSubscriptions, page, limit, searchTerm]);
 
     const formatDate = (dateString) => {
         const date = new Date(dateString);
@@ -28,6 +72,25 @@ const SubscriptionsList = () => {
         });
     };
 
+    const handlePageChange = (newPage) => {
+        setSearchParams({ page: newPage, limit });
+    };
+
+    const handleLimitChange = (newLimit) => {
+        setSearchParams({ page: 1, limit: newLimit });
+    };
+
+    const handleSearch = (e) => {
+        e.preventDefault();
+        // 검색 버튼이나 엔터를 눌렀을 때만 검색 실행
+        setSearchTerm(searchInput);
+        setSearchParams({ page: 1, limit });
+    };
+
+    const handleSearchInputChange = (e) => {
+        setSearchInput(e.target.value);
+    };
+
     const handleCancel = (subscription) => {
         if(window.confirm('정말로 구독을 취소하시겠습니까?')) {
             subApi.post('/admin/subscriptions/cancel', {
@@ -35,8 +98,8 @@ const SubscriptionsList = () => {
                 vehicleId: subscription.vehicleId
             })
                 .then(() => {
-                    // 취소된 구독을 목록에서 제거
-                    setSubscriptions(subscriptions.filter(sub => sub._id !== subscription._id));
+                    // 취소된 구독을 전체 목록에서 제거
+                    setAllSubscriptions(allSubscriptions.filter(sub => sub._id !== subscription._id));
                     alert('구독이 취소되었습니다.');
                 })
                 .catch(err => {
@@ -53,8 +116,8 @@ const SubscriptionsList = () => {
                 vehicleId: subscription.vehicleId
             })
                 .then(() => {
-                    // 환불된 구독을 목록에서 제거
-                    setSubscriptions(subscriptions.filter(sub => sub._id !== subscription._id));
+                    // 환불된 구독을 전체 목록에서 제거
+                    setAllSubscriptions(allSubscriptions.filter(sub => sub._id !== subscription._id));
                     alert('환불이 완료되었습니다.');
                 })
                 .catch(err => {
@@ -68,11 +131,62 @@ const SubscriptionsList = () => {
         return <Loading text="구독 목록을 불러오는 중..." />;
     }
 
+    const totalPages = Math.ceil(total / limit);
+    const groupSize = 5;
+
     return (
         <div style={{ maxWidth: 1000, margin: '40px auto 0 auto', padding: '0 16px' }}>
             <h2 style={{ fontSize: 24, fontWeight: 700, borderBottom: '2px solid #1976d2', paddingBottom: 8, color: '#222', margin: 0 }}>
                 활성 구독 목록
             </h2>
+            
+            <div style={{ marginTop: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <form onSubmit={handleSearch} style={{ display: 'flex', gap: '8px' }}>
+                    <input
+                        type="text"
+                        placeholder="사용자명으로 검색"
+                        value={searchInput}
+                        onChange={handleSearchInputChange}
+                        onKeyPress={(e) => {
+                            if (e.key === 'Enter') {
+                                e.preventDefault();
+                                handleSearch(e);
+                            }
+                        }}
+                        style={{
+                            padding: '8px 12px',
+                            border: '1px solid #ddd',
+                            borderRadius: '4px',
+                            fontSize: '14px',
+                            width: '250px'
+                        }}
+                    />
+                    <button
+                        type="submit"
+                        style={{
+                            padding: '8px 16px',
+                            background: '#1976d2',
+                            color: '#fff',
+                            border: '1px solid #1976d2',
+                            borderRadius: '4px',
+                            cursor: 'pointer',
+                            fontSize: '14px',
+                            transition: 'background 0.2s, color 0.2s'
+                        }}
+                        onMouseOver={e => {
+                            e.currentTarget.style.background = '#fff';
+                            e.currentTarget.style.color = '#1976d2';
+                        }}
+                        onMouseOut={e => {
+                            e.currentTarget.style.background = '#1976d2';
+                            e.currentTarget.style.color = '#fff';
+                        }}
+                    >
+                        검색
+                    </button>
+                </form>
+                <LimitSelect limit={limit} onLimitChange={handleLimitChange} />
+            </div>
             <div style={{ minHeight: 220 }}>
                 {loading ? (
                     <div style={{ textAlign: 'center', padding: '40px 0' }}>로딩 중...</div>
@@ -220,6 +334,13 @@ const SubscriptionsList = () => {
                                 )}
                             </tbody>
                         </table>
+                        
+                        <Pagination 
+                            page={page} 
+                            totalPages={totalPages} 
+                            groupSize={groupSize} 
+                            onChange={handlePageChange} 
+                        />
                     </>
                 )}
             </div>

@@ -16,23 +16,26 @@ const MemberList = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [selectedMemberId, setSelectedMemberId] = useState(null);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [searchInput, setSearchInput] = useState('');
 
     const page = Number(searchParams.get('page')) || 1;
     const limit = Number(searchParams.get('limit')) || 10;
 
     useEffect(() => {
         setLoading(true);
-        memberApi.get(`/admin/members?page=${page}&limit=${limit}`)
+        const searchQuery = searchTerm ? `&search=${searchTerm}` : '';
+        memberApi.get(`/admin/members?page=${page}&limit=${limit}${searchQuery}`)
             .then(res => {
                 console.log(res.data);
-                setMembers(res.data.members || []);
+                setMembers(res.data.members || res.data || []);
                 setTotal(res.data.total || 0);
                 setLoading(false);
             }).catch(err => {
                 console.log(err);
                 setLoading(false);
             })
-    }, [page, limit]);
+    }, [page, limit, searchTerm]);
 
     const handlePageChange = (newPage) => {
         setSearchParams({ page: newPage, limit });
@@ -42,17 +45,33 @@ const MemberList = () => {
         setSearchParams({ page: 1, limit: newLimit });
     };
 
+    const handleSearch = (e) => {
+        e.preventDefault();
+        // 검색 버튼이나 엔터를 눌렀을 때만 검색 실행
+        setSearchTerm(searchInput);
+        setSearchParams({ page: 1, limit });
+    };
+
+    const handleSearchInputChange = (e) => {
+        setSearchInput(e.target.value);
+    };
+
     const handleDelete = (id) => {
         if(window.confirm('정말로 삭제하시겠습니까?')) {
             memberApi.delete(`/admin/members/${id}`)
                 .then(() => {
+                    // 삭제 후 현재 페이지의 데이터를 다시 불러옴
+                    const searchQuery = searchTerm ? `&search=${searchTerm}` : '';
+                    return memberApi.get(`/admin/members?page=${page}&limit=${limit}${searchQuery}`);
+                })
+                .then(res => {
+                    setMembers(res.data.members || res.data || []);
+                    setTotal(res.data.total || 0);
+                    
                     // 현재 페이지가 1페이지가 아니고, 현재 페이지의 마지막 항목을 삭제한 경우 1페이지로 이동
-                    const currentPageItems = members.length;
-                    if (page > 1 && currentPageItems === 1) {
-                        setSearchParams({ page: 1, limit });
-                    } else {
-                        // 현재 페이지에서 항목만 제거
-                        setMembers(members.filter(member => member._id !== id));
+                    const currentPageItems = res.data.members?.length || 0;
+                    if (page > 1 && currentPageItems === 0) {
+                        setSearchParams({ page: page - 1, limit });
                     }
                 })
                 .catch(err => {
@@ -85,7 +104,51 @@ const MemberList = () => {
                 회원 전체 목록
             </h2>
             
-            <div style={{ marginTop: '16px' }}>
+            <div style={{ marginTop: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <form onSubmit={handleSearch} style={{ display: 'flex', gap: '8px' }}>
+                    <input
+                        type="text"
+                        placeholder="사용자명으로 검색"
+                        value={searchInput}
+                        onChange={handleSearchInputChange}
+                        onKeyPress={(e) => {
+                            if (e.key === 'Enter') {
+                                e.preventDefault();
+                                handleSearch(e);
+                            }
+                        }}
+                        style={{
+                            padding: '8px 12px',
+                            border: '1px solid #ddd',
+                            borderRadius: '4px',
+                            fontSize: '14px',
+                            width: '250px'
+                        }}
+                    />
+                    <button
+                        type="submit"
+                        style={{
+                            padding: '8px 16px',
+                            background: '#1976d2',
+                            color: '#fff',
+                            border: '1px solid #1976d2',
+                            borderRadius: '4px',
+                            cursor: 'pointer',
+                            fontSize: '14px',
+                            transition: 'background 0.2s, color 0.2s'
+                        }}
+                        onMouseOver={e => {
+                            e.currentTarget.style.background = '#fff';
+                            e.currentTarget.style.color = '#1976d2';
+                        }}
+                        onMouseOut={e => {
+                            e.currentTarget.style.background = '#1976d2';
+                            e.currentTarget.style.color = '#fff';
+                        }}
+                    >
+                        검색
+                    </button>
+                </form>
                 <LimitSelect limit={limit} onLimitChange={handleLimitChange} />
             </div>
             

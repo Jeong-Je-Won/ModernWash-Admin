@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { memberApi } from '../../config/api.config';
 import Loading from '../common/Loading';
+import CardChangeModal from './CardChangeModal';
 
 const MemberVehicles = () => {
     const { memberId } = useParams();
@@ -9,6 +10,8 @@ const MemberVehicles = () => {
     const [member, setMember] = useState(null);
     const [vehicles, setVehicles] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [isCardModalOpen, setIsCardModalOpen] = useState(false);
+    const [selectedVehicle, setSelectedVehicle] = useState(null);
 
     useEffect(() => {
         setLoading(true);
@@ -37,6 +40,11 @@ const MemberVehicles = () => {
             </div>
         );
     }
+
+    const handleCardChange = (vehicle) => {
+        setSelectedVehicle(vehicle);
+        setIsCardModalOpen(true);
+    };
 
     return (
         <div style={{ maxWidth: 1000, margin: '40px auto 0 auto', padding: '0 16px' }}>
@@ -130,7 +138,7 @@ const MemberVehicles = () => {
                                                         e.currentTarget.style.color = '#fff';
                                                         e.currentTarget.style.border = '1px solid #1976d2';
                                                     }}
-                                                    onClick={() => alert('카드변경 기능은 추후 구현 예정입니다.')}
+                                                    onClick={() => handleCardChange(vehicle)}
                                                 >카드변경</button>
                                             </div>
                                         </td>
@@ -182,6 +190,19 @@ const MemberVehicles = () => {
                     목록으로
                 </button>
             </div>
+            
+            <CardChangeModal 
+                isOpen={isCardModalOpen}
+                onClose={() => {
+                    setIsCardModalOpen(false);
+                    setSelectedVehicle(null);
+                }}
+                memberId={member?._id}
+                memberInfo={{
+                    ...member,
+                    cardNumber: selectedVehicle?.cardNumber || ''
+                }}
+            />
         </div>
     );
 };
